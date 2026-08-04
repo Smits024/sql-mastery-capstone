@@ -68,6 +68,19 @@ if (-not (Test-Path (Join-Path $data "online-retail\Online Retail.xlsx"))) {
 Get-File "https://public.tableau.com/app/sample-data/sample_-_superstore.xls" `
          (Join-Path $data "superstore\sample-superstore.xls")
 
+# HR dataset - Rich Huebner's Human Resources Data Set, from a public mirror so no
+# Kaggle account is needed. Kaggle page: rhuebner/human-resources-data-set
+# The dataset named in the original project notes, neurocipher/employee-dataset, is a dead link.
+$hr = Join-Path $data "hr\HRDataset_v14.csv"
+Get-File "https://raw.githubusercontent.com/pouyasattari/HR-Dataset-Analysis/main/HRDataset_v14.csv" $hr
+# The mirror ships a UTF-8 BOM, which corrupts the first column name on load. Strip it.
+$bytes = [System.IO.File]::ReadAllBytes($hr)
+if ($bytes.Length -ge 3 -and $bytes[0] -eq 0xEF -and $bytes[1] -eq 0xBB -and $bytes[2] -eq 0xBF) {
+    $text = [System.IO.File]::ReadAllText($hr, [System.Text.Encoding]::UTF8)
+    [System.IO.File]::WriteAllText($hr, $text, (New-Object System.Text.UTF8Encoding($false)))
+    Write-Host "      stripped UTF-8 BOM"
+}
+
 Write-Host ""
 Write-Host "done. see data/README.md for load instructions."
 Write-Host "to regenerate the CSVs from the Excel sources: python 00-setup/excel-to-csv.py"

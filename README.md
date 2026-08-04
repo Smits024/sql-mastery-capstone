@@ -49,8 +49,10 @@ That includes Superstore and Online Retail, taken from their primary sources (Ta
   `https://archive.ics.uci.edu/static/public/352/online+retail.zip`
 - **Superstore** — Tableau public sample data, the original of Kaggle's `vivek468/superstore-dataset-final`:
   `https://public.tableau.com/app/sample-data/sample_-_superstore.xls`
+- **HR** — Rich Huebner's Human Resources Data Set (Kaggle `rhuebner/human-resources-data-set`), via public mirror:
+  `https://raw.githubusercontent.com/pouyasattari/HR-Dataset-Analysis/main/HRDataset_v14.csv`
 
-Only `neurocipher/employee-dataset` remains Kaggle-only; Chinook's self-referencing `Employee.ReportsTo` covers the same hierarchy ground. See `data/README.md`.
+The `neurocipher/employee-dataset` link in the original project notes is dead (404); the HR dataset above is what it referred to. For recursive hierarchy work use Chinook's `Employee.ReportsTo`, not the HR table's `ManagerID` — see `data/README.md` for why.
 
 Start with the Chinook `.sqlite` file — one download, no setup, and it covers joins, aggregates, and window functions.
 

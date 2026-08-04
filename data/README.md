@@ -13,6 +13,7 @@ data/
   gharchive/    2024-01-01-15.json.gz                 79.3 MB   180,387 JSON lines
   online-retail/ online-retail.csv                    46.3 MB   541,909 rows
   superstore/   superstore-{orders,returns,people}.csv 2.4 MB   3 related tables
+  hr/           HRDataset_v14.csv                     0.07 MB   311 rows, 36 columns
 ```
 
 Total tracked: ~270 MB. The GH Archive file is 79.3 MB, over GitHub's 50 MB recommendation but under the 100 MB hard limit, so it pushes with a warning and no LFS.
@@ -75,18 +76,28 @@ The source `.xlsx` (22.6 MB) is git-ignored since the CSV supersedes it; re-crea
 The original `sample-superstore.xls` is kept alongside. Three related tables make this the best
 dataset here for join and star-schema practice.
 
-**HR / org hierarchy** — not fetched. `neurocipher/employee-dataset` is Kaggle-native with no
-upstream source, and its login cannot be worked around. It is also the least necessary: the
-recursive-CTE and hierarchy work in `05-subqueries-ctes` is covered by Chinook's `Employee`
-table, which has a self-referencing `ReportsTo` foreign key — a real manager chain. If a larger
-hierarchy is wanted later, the MySQL `test_db` employees sample database is the usual
-no-login substitute.
+**HR** — `hr/HRDataset_v14.csv`. 311 rows, 36 columns. Rich Huebner's Human Resources Data Set,
+pulled from a public GitHub mirror so no Kaggle account is needed. The Kaggle page is
+`rhuebner/human-resources-data-set`.
 
-To pull the Kaggle copies anyway, a free account plus `~/.kaggle/kaggle.json` gives you:
+Note: the dataset named in the original project notes, `neurocipher/employee-dataset`, does not
+exist — that URL returns 404. This is the dataset it was pointing at.
 
-```bash
-kaggle datasets download -d neurocipher/employee-dataset -p data/kaggle --unzip
-```
+Columns worth knowing: `EmpID`, `Employee_Name`, `Department`, `Position`, `Salary`,
+`DateofHire`, `DateofTermination`, `TermReason`, `EmploymentStatus`, `PerformanceScore`,
+`EngagementSurvey`, `Absences`, `ManagerName`, `ManagerID`. The BOM on the original header was
+stripped, so `Employee_Name` parses cleanly as the first column.
+
+**This table is not a recursive hierarchy.** `ManagerID` runs 1–39 while `EmpID` runs
+10001–10311, and **zero** `ManagerID` values match any `EmpID`. No manager appears as an employee
+row. It is a flat two-level lookup into a manager list that is not in the data, so it will not
+drive a recursive CTE. Two real quirks that make it good cleaning material: 23 distinct
+`ManagerID` values map to only 21 distinct `ManagerName` values, and 8 rows have a blank
+`ManagerID`.
+
+For genuine recursion use Chinook's `Employee` table instead — 8 rows, `ReportsTo` is a true
+self-referencing FK (7 of 8 rows resolve to a real `EmployeeId`, 1 root with `ReportsTo IS NULL`),
+and a recursive CTE walks it to depth 3. Verified working.
 
 ## Regenerating the CSVs
 
