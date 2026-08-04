@@ -1,17 +1,19 @@
 # Data
 
-Everything in this folder except this file and `.gitkeep` is git-ignored. Nothing here is committed — the layout below is what a fresh clone should recreate locally.
+These datasets are committed to the repo — a clone gives you everything below, no download step. Only the downloaded `.zip` archives are ignored, since their extracted contents are tracked instead.
 
 ## Layout
 
 ```
 data/
   chinook/      Chinook_Sqlite.sqlite                 0.96 MB   ready to open
-  pagila/       pagila-master.zip + pagila-master/    20.8 MB   PostgreSQL dump
+  pagila/       pagila-master/                        43 MB     PostgreSQL dump
   csv-samples/  files/*.csv                           48 MB     7 files
   nyc-taxi/     yellow_tripdata_2024-01.parquet       47.7 MB
   gharchive/    2024-01-01-15.json.gz                 79.3 MB   180,387 JSON lines
 ```
+
+Total tracked: ~220 MB. The GH Archive file is 79.3 MB, over GitHub's 50 MB recommendation but under the 100 MB hard limit, so it pushes with a warning and no LFS.
 
 ## What is here
 

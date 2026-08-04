@@ -26,13 +26,9 @@ SQL mastery capstone. The premise: I am the analytics engineer at **RetailIQ**, 
 
 ## Data
 
-Datasets are **not** committed. GitHub rejects any single file over 100MB and repositories hold code, not data. After cloning, fetch every no-login dataset in one shot:
+Datasets are committed to this repo, so `git clone` gives you the code and the data together with nothing else to run. The clone is roughly **220 MB** — expect it to take a minute.
 
-```powershell
-pwsh -File 00-setup/fetch-data.ps1
-```
-
-That lands ~240 MB in `data/` and skips anything already downloaded. See `data/README.md` for the resulting layout, row counts, and load instructions. The Kaggle datasets below need an account and must be fetched manually. Source URLs are listed here for reference.
+Only the Kaggle datasets are missing, since they need an account. `00-setup/fetch-data.ps1` re-downloads everything from source if you ever need to refresh it. See `data/README.md` for layout, row counts, and load instructions.
 
 ### No login required
 
