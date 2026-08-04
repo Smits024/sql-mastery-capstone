@@ -2,6 +2,38 @@
 
 SQL mastery capstone. The premise: I am the analytics engineer at **RetailIQ**, a retailer selling music (Chinook catalogue) and DVDs (Pagila catalogue). The work is to ingest messy e-commerce CSVs, clean them, build a warehouse, and deliver analytics on top of it.
 
+## Setting up on another machine
+
+The repo is public and the data is committed, so everything comes down in one clone — no token, no login, no browser.
+
+**In IntelliJ, nothing else needed:**
+
+> File → New → Project from Version Control → paste the URL below → Clone
+
+```
+https://github.com/Smits024/sql-mastery-capstone.git
+```
+
+IntelliJ has a bundled Git client, so this works even without Git installed and without visiting github.com.
+
+**Or from a terminal:**
+
+```powershell
+git clone https://github.com/Smits024/sql-mastery-capstone.git
+```
+
+**Or run the bootstrap script**, which clones *and* verifies every dataset arrived intact — sizes plus SQLite/Parquet magic numbers, so a truncated or mangled download is caught immediately:
+
+```powershell
+# fetch the single file by URL, then run it
+iwr https://raw.githubusercontent.com/Smits024/sql-mastery-capstone/main/00-setup/bootstrap.ps1 -OutFile bootstrap.ps1
+pwsh -File bootstrap.ps1
+```
+
+Add `-Shallow` for a `--depth 1` clone (faster, no history), or `-Target D:\projects` to choose where it lands.
+
+The clone is ~270 MB and takes a few minutes. Then: **File → Open** → pick the folder → Trust Project.
+
 ## Repository layout
 
 | Path | Purpose |
