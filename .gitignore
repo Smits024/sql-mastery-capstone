@@ -1,3 +1,4 @@
 # Datasets are committed to this repo intentionally so the data ships with the code.
-# Only redundant archives are ignored - their extracted contents are tracked instead.
+# Ignored below are only redundant artefacts whose usable form is already tracked.
 data/**/*.zip
+data/online-retail/*.xlsx

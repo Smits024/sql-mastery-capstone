@@ -55,5 +55,19 @@ Get-File "https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2024-0
 Get-File "https://data.gharchive.org/2024-01-01-15.json.gz" `
          (Join-Path $data "gharchive\2024-01-01-15.json.gz")
 
+# Online Retail - the primary UCI source for what Kaggle lists as carrie1/ecommerce-data.
+# No account needed. Ships as .xlsx; convert to CSV with 00-setup/excel-to-csv.py.
+$retailZip = Join-Path $data "online-retail\online-retail.zip"
+Get-File "https://archive.ics.uci.edu/static/public/352/online+retail.zip" $retailZip
+if (-not (Test-Path (Join-Path $data "online-retail\Online Retail.xlsx"))) {
+    Expand-Archive -Path $retailZip -DestinationPath (Join-Path $data "online-retail") -Force
+}
+
+# Superstore - Tableau's public sample data, the origin of the Kaggle superstore dataset.
+# Three sheets: Orders, People, Returns.
+Get-File "https://public.tableau.com/app/sample-data/sample_-_superstore.xls" `
+         (Join-Path $data "superstore\sample-superstore.xls")
+
 Write-Host ""
 Write-Host "done. see data/README.md for load instructions."
+Write-Host "to regenerate the CSVs from the Excel sources: python 00-setup/excel-to-csv.py"

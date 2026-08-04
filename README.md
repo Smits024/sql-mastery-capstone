@@ -26,9 +26,9 @@ SQL mastery capstone. The premise: I am the analytics engineer at **RetailIQ**, 
 
 ## Data
 
-Datasets are committed to this repo, so `git clone` gives you the code and the data together with nothing else to run. The clone is roughly **220 MB** — expect it to take a minute.
+Datasets are committed to this repo, so `git clone` gives you the code and the data together with nothing else to run. The clone is roughly **270 MB** — expect it to take a minute.
 
-Only the Kaggle datasets are missing, since they need an account. `00-setup/fetch-data.ps1` re-downloads everything from source if you ever need to refresh it. See `data/README.md` for layout, row counts, and load instructions.
+That includes Superstore and Online Retail, taken from their primary sources (Tableau public sample data and the UCI ML Repository) rather than the Kaggle re-uploads, so no account is needed. `00-setup/fetch-data.ps1` re-downloads everything from source, and `00-setup/excel-to-csv.py` regenerates the CSVs from the Excel originals. See `data/README.md` for layout, row counts, and load instructions.
 
 ### No login required
 
@@ -43,11 +43,14 @@ Only the Kaggle datasets are missing, since they need an account. `00-setup/fetc
 - **GH Archive (Dataset D)** — real GitHub events as JSON lines:
   `https://data.gharchive.org/2024-01-01-15.json.gz`
 
-### Kaggle account required
+### Sourced upstream of Kaggle, no account needed
 
-- Superstore Sales: `https://www.kaggle.com/datasets/vivek468/superstore-dataset-final`
-- E-commerce: `https://www.kaggle.com/datasets/carrie1/ecommerce-data`
-- HR / org hierarchy: `https://www.kaggle.com/datasets/neurocipher/employee-dataset`
+- **Online Retail** — UCI ML Repository dataset 352, the original of Kaggle's `carrie1/ecommerce-data`:
+  `https://archive.ics.uci.edu/static/public/352/online+retail.zip`
+- **Superstore** — Tableau public sample data, the original of Kaggle's `vivek468/superstore-dataset-final`:
+  `https://public.tableau.com/app/sample-data/sample_-_superstore.xls`
+
+Only `neurocipher/employee-dataset` remains Kaggle-only; Chinook's self-referencing `Employee.ReportsTo` covers the same hierarchy ground. See `data/README.md`.
 
 Start with the Chinook `.sqlite` file — one download, no setup, and it covers joins, aggregates, and window functions.
 
