@@ -1,0 +1,16 @@
+# Source files get normal line-ending handling.
+* text=auto
+
+# Data must check out byte-for-byte identical on every machine.
+# Without this, Git for Windows (core.autocrlf=true by default) rewrites LF to CRLF
+# on checkout, which changes file sizes, breaks byte offsets, and can upset bulk
+# loaders (COPY, LOAD DATA INFILE) that are strict about line terminators.
+data/** -text
+
+# Belt and braces for the binary formats.
+*.sqlite  binary
+*.parquet binary
+*.gz      binary
+*.xls     binary
+*.xlsx    binary
+*.backup  binary
