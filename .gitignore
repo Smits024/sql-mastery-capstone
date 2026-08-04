@@ -1,0 +1,7 @@
+data/*.csv
+data/*.parquet
+data/*.sqlite
+data/*.json
+data/*.json.gz
+data/*.zip
+!data/.gitkeep
