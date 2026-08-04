@@ -2,6 +2,25 @@
 
 SQL mastery capstone. The premise: I am the analytics engineer at **RetailIQ**, a retailer selling music (Chinook catalogue) and DVDs (Pagila catalogue). The work is to ingest messy e-commerce CSVs, clean them, build a warehouse, and deliver analytics on top of it.
 
+## Quick start
+
+```powershell
+pip install -r 00-setup/requirements.txt
+python 00-setup/build_warehouse.py
+```
+
+Builds `data/retailiq.duckdb` — all seven sources in one database, **93 tables, 4.2M rows**, in
+about 100 seconds. No server, no admin rights, no database to install.
+
+```python
+import duckdb
+con = duckdb.connect("data/retailiq.duckdb", read_only=True)
+con.sql("SELECT * FROM chinook.Track LIMIT 5").show()
+```
+
+See [00-setup/README.md](00-setup/README.md) for why DuckDB, what it will not do, and how Pagila
+is loaded without PostgreSQL.
+
 ## The work
 
 **[docs/project-questions.md](docs/project-questions.md)** is the project plan: 20 questions that

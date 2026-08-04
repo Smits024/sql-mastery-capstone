@@ -14,22 +14,34 @@ hours, not a five-minute query.
 
 ## Engine
 
-Write for **PostgreSQL 16** as the primary engine. It is the only one of the candidates that
-supports the full surface these questions need — `FILTER`, `GROUPING SETS`, `LATERAL`, `MERGE`,
-`jsonb`, ordered-set aggregates, `generate_series`, window `EXCLUDE`, and `TABLESAMPLE` — and
-Pagila is a native PostgreSQL dump, so it loads with no translation.
+**DuckDB.** It is already set up — `python 00-setup/build_warehouse.py` puts all seven sources in
+one database, 93 tables and 4.2M rows, in about 100 seconds. See
+[`00-setup/README.md`](../00-setup/README.md).
 
-Two practical notes:
+PostgreSQL would be the better engine on paper, and it was the first choice. It was rejected
+because it cannot be installed on the machines this project has to run on: no Docker daemon, no
+`psql`, no server, and the second laptop is locked down further. DuckDB is a single `pip install`
+with no server and no admin rights, and it reads Parquet, gzipped JSON, CSV and SQLite natively,
+which deletes the whole conversion problem.
 
-- **Chinook ships as SQLite.** Q1 covers moving it into PostgreSQL. Keep the SQLite file around;
-  the dialect differences are worth seeing.
-- **PostgreSQL cannot read Parquet natively.** For the NYC taxi file use DuckDB
-  (`SELECT * FROM 'yellow_tripdata_2024-01.parquet'`), which reads it directly and speaks
-  near-identical SQL, or convert it to CSV first. Q14 and Q15 are where it earns its place — 3
-  million rows is what makes window-function cost visible in a way 10k rows never will.
+Feature support was verified against this repo's data, not assumed. Window frames including
+`GROUPS` and `EXCLUDE`, `QUALIFY`, `GROUPING SETS`/`ROLLUP`/`CUBE`/`GROUPING()`, `FILTER`,
+ordered-set aggregates, recursive CTEs, `LATERAL`, `DISTINCT ON`, `PIVOT`/`UNPIVOT`, `MERGE INTO`,
+`ON CONFLICT`, transactions, and enforced `CHECK` constraints all work.
 
-Where a question says *portable*, write it so it runs on both PostgreSQL and SQLite, and note in
-comments what you had to change. Dialect awareness is part of the job.
+**Four topics need PostgreSQL and are flagged where they appear.** Do them later on a machine that
+allows a server; do not skip them silently.
+
+| Topic | Question | Workaround on DuckDB |
+| --- | --- | --- |
+| Isolation levels, `SKIP LOCKED`, deadlocks | Q17 | None — single-writer. Read and write up instead. |
+| Materialized views, GIN indexes, `EXPLAIN (BUFFERS)` | Q18 | Use `CREATE TABLE AS`, `EXPLAIN ANALYZE` |
+| `FETCH FIRST ... WITH TIES` | Q6 | `QUALIFY RANK() OVER (...) = 1` |
+| Pagila's native DDL | Q1 | Already handled — data parsed from the dump's `COPY` blocks |
+
+One thing the loader deliberately does *not* do: type anything. Pagila and every CSV land as
+`VARCHAR`. Profiling and casting them is Q2's work, and doing it for you would hide the defects
+the project exists to teach.
 
 ## Folder and module map
 
@@ -59,22 +71,26 @@ Module 82 is unassigned in the source plan — use it for the pre-capstone dry r
 
 ## Q1 — Stand up the platform and inventory what you have
 
-**Ask.** RetailIQ has handed you seven raw sources and no documentation. Get them all queryable in
-one PostgreSQL instance and produce an inventory the rest of the project can trust.
+**Ask.** RetailIQ has handed you seven raw sources and no documentation. Get them all queryable
+from one connection and produce an inventory the rest of the project can trust.
 
 **Data.** All of it: Chinook, Pagila, Online Retail, Superstore, HR, NYC taxi, GH Archive.
 
-**Must use.** `CREATE DATABASE`, `CREATE SCHEMA`, `CREATE TABLE`, `COPY`, `\copy`, `psql`
-meta-commands, the information schema (`information_schema.tables`, `.columns`,
-`pg_catalog.pg_class`), `pg_size_pretty`, `pg_total_relation_size`, `CREATE EXTENSION`.
+**The loading is done for you** — `python 00-setup/build_warehouse.py` builds
+`data/retailiq.duckdb`. Read that script before anything else; it is the shape of every ingestion
+problem this project contains, including why Pagila had to be parsed out of a pg_dump by hand.
 
-**Deliverable.** `00-setup/01-load-all.sql`, `00-setup/02-inventory.sql`, and
-`docs/data-inventory.md` — one row per table: source, grain, row count, on-disk size, primary key,
-and a one-line description. Include a schema-per-source layout (`raw_chinook`, `raw_pagila`,
-`raw_files`) so nothing collides.
+**Must use.** `CREATE SCHEMA`, `CREATE TABLE AS`, `read_csv_auto`, `read_parquet`,
+`read_json_auto`, `ATTACH ... (TYPE sqlite)`, the information schema
+(`information_schema.tables`, `.columns`), and the DuckDB catalog functions `duckdb_tables()`,
+`duckdb_columns()`, `duckdb_databases()`.
 
-**Done when.** Every source is queryable from one connection, the inventory is generated *by a
-query* rather than typed by hand, and re-running the load is idempotent.
+**Deliverable.** `00-setup/02-inventory.sql` and `docs/data-inventory.md` — one row per table:
+source, grain, row count, column count, candidate primary key, and a one-line description.
+
+**Done when.** The inventory is generated *by a query*, not typed by hand, and you can state the
+grain of all 93 tables. Two are deliberately awkward: `pagila.payment` (unioned from 55 monthly
+partitions) and `raw.gh_events` (one row per event, with a nested JSON payload).
 
 ---
 
@@ -176,7 +192,8 @@ ship-lag handles the rows where `Ship Date` precedes `Order Date`.
 **Must use.** `CASE` (simple and searched), nested `CASE`, `COALESCE` as a `CASE` shorthand,
 `NULLIF` to dodge divide-by-zero, `ORDER BY` with expressions, multiple keys, `ASC`/`DESC`,
 `NULLS FIRST/LAST`, ordering by a `CASE` for custom sort orders, `LIMIT` / `OFFSET`,
-`FETCH FIRST n ROWS WITH TIES`, keyset pagination, `DISTINCT ON`, and `TABLESAMPLE`.
+`FETCH FIRST n ROWS WITH TIES` (**not in DuckDB** — use `QUALIFY RANK() OVER (...) <= n` and note
+the difference), keyset pagination, `DISTINCT ON`, and `TABLESAMPLE`.
 
 **Deliverable.** `02-single-table/04-case-logic.sql`, `02-single-table/05-pagination.sql`,
 plus `docs/pagination-notes.md` comparing OFFSET and keyset pagination at depth.
@@ -264,8 +281,9 @@ aggregates (`RANK() WITHIN GROUP`).
 `docs/why-median-not-mean.md`.
 
 **Done when.** One query returns category, region, and grand totals distinguishable via
-`GROUPING()`, and you have shown a case in the taxi data where the mean fare misleads and the
-median does not.
+`GROUPING()`, and you have explained the taxi fare gap: across the 2,964,624 trips the **median
+fare is 12.80 and the mean is 18.66** — a 46% overstatement driven by a long right tail of airport
+runs. Show the distribution that causes it, and say which number belongs in a board report.
 
 ---
 

@@ -1,7 +1,12 @@
-# Datasets are committed to this repo intentionally so the data ships with the code.
+# Source datasets are committed to this repo intentionally so the data ships with the code.
 # Ignored below are only redundant artefacts whose usable form is already tracked.
 data/**/*.zip
 data/online-retail/*.xlsx
+
+# The built database is derived from data/ - rebuild it with 00-setup/build_warehouse.py.
+# 721 MB, and it would change on every rebuild.
+*.duckdb
+*.duckdb.wal
 
 # Python
 __pycache__/

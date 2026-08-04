@@ -1,0 +1,8 @@
+# Everything the project needs. All pure-wheel installs - no compiler, no admin rights,
+# no database server.
+duckdb>=1.4
+
+# Only needed to regenerate the CSVs from the Excel sources (00-setup/excel-to-csv.py).
+pandas>=2.0
+openpyxl>=3.1
+xlrd>=2.0
