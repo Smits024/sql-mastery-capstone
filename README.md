@@ -2,6 +2,13 @@
 
 SQL mastery capstone. The premise: I am the analytics engineer at **RetailIQ**, a retailer selling music (Chinook catalogue) and DVDs (Pagila catalogue). The work is to ingest messy e-commerce CSVs, clean them, build a warehouse, and deliver analytics on top of it.
 
+## The work
+
+**[docs/project-questions.md](docs/project-questions.md)** is the project plan: 20 questions that
+run in order, each producing a real artefact the next one builds on. Between them they cover every
+SQL topic from `SELECT` to SCD Type 2, with a coverage matrix mapping each topic to the question
+that exercises it.
+
 ## Setting up on another machine
 
 The repo is public and the data is committed, so everything comes down in one clone — no token, no login, no browser.
