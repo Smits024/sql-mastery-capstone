@@ -1,3 +1,3 @@
-data/**
-!data/.gitkeep
-!data/README.md
+# Datasets are committed to this repo intentionally so the data ships with the code.
+# Only redundant archives are ignored - their extracted contents are tracked instead.
+data/**/*.zip
