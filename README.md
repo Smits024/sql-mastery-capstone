@@ -25,8 +25,12 @@ is loaded without PostgreSQL.
 
 **[docs/project-questions.md](docs/project-questions.md)** is the project plan: 20 questions that
 run in order, each producing a real artefact the next one builds on. Between them they cover every
-SQL topic from `SELECT` to SCD Type 2, with a coverage matrix mapping each topic to the question
-that exercises it.
+SQL topic from `SELECT` to SCD Type 2 — all 86 modules — with a coverage matrix mapping each topic
+to the question that exercises it.
+
+**[docs/answers.md](docs/answers.md)** is the answer sheet. Q1 is worked in full as the example,
+including a plain-English walkthrough written for a non-technical reader; Q2–Q20 are templates to
+fill in as you go.
 
 ## Setting up on another machine
 
