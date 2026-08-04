@@ -2,3 +2,9 @@
 # Ignored below are only redundant artefacts whose usable form is already tracked.
 data/**/*.zip
 data/online-retail/*.xlsx
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
