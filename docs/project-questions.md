@@ -60,16 +60,27 @@ the project exists to teach.
 | 11 | `09-etl/` | 61–67 | Q19 |
 | 12 | `10-warehouse/` | 68–74 | Q20 |
 | 13 | `tests/` | 75–81 | Q20 |
+| — | *(unassigned)* | 82 | Q20 |
 | 14 | `36-capstone-report/` | 83–86 | Q20 |
 | 15 | `data/` | — | source data, committed |
 | 16 | `queries/` | — | consolidated query library |
 | 17 | `docs/` | — | ER diagrams, notes, performance write-ups |
 
-Module 82 is unassigned in the source plan — use it for the pre-capstone dry run.
+Module 82 has no folder in the source plan. It is used here for the integration rehearsal — a full
+pipeline dry run before the capstone.
+
+Every question below lists the modules it covers. All 86 are accounted for; the full list with
+names is in [All 86 modules](#all-86-modules) at the bottom. Module numbers and ranges come from
+the project plan, but the **names are written to fit each range** — if you have a canonical list,
+swap the names in and the numbering will still line up.
 
 ---
 
 ## Q1 — Stand up the platform and inventory what you have
+
+**Modules covered.**
+
+- `61` Bulk loading and landing tables
 
 **Ask.** RetailIQ has handed you seven raw sources and no documentation. Get them all queryable
 from one connection and produce an inventory the rest of the project can trust.
@@ -96,6 +107,13 @@ partitions) and `raw.gh_events` (one row per event, with a nested JSON payload).
 
 ## Q2 — Types, casting, and the NULL audit
 
+**Modules covered.**
+
+- `02` Numeric, text and boolean types
+- `03` Date, time and interval types
+- `04` Casting, coercion and TRY_CAST
+- `05` NULL semantics, COALESCE, NULLIF
+
 **Ask.** The CSVs arrived as all-text. Establish what each column really is, and write the
 definitive rules for how RetailIQ treats missing data.
 
@@ -118,6 +136,11 @@ when the subquery contains a NULL.
 ---
 
 ## Q3 — Expressions, string, and numeric function drill
+
+**Modules covered.**
+
+- `01` SELECT, projection, aliases and literals
+- `06` String and numeric function library
 
 **Ask.** Customer names, addresses, and product descriptions are inconsistent. Build the
 normalisation expression library the ETL layer will reuse.
@@ -142,6 +165,13 @@ and you can explain what `WIDTH_BUCKET` gives you that a `CASE` ladder does not.
 
 ## Q4 — Filtering, pattern matching, and regular expressions
 
+**Modules covered.**
+
+- `07` WHERE, comparison and logical operators
+- `08` BETWEEN, IN and quantified predicates
+- `09` LIKE, ILIKE and pattern matching
+- `10` Regular expressions and regex extraction
+
 **Ask.** Fraud and ops need precise slices of the transaction log. Cancelled invoices, suspicious
 SKUs, and free-text matching.
 
@@ -161,6 +191,11 @@ SKUs, and free-text matching.
 ---
 
 ## Q5 — Dates, times, and the calendar spine
+
+**Modules covered.**
+
+- `11` Date arithmetic, DATE_TRUNC, EXTRACT
+- `12` Calendar spine with generate_series
 
 **Ask.** Every report is time-sliced. Build the date dimension the warehouse will use, and settle
 fiscal-calendar rules.
@@ -185,6 +220,10 @@ ship-lag handles the rows where `Ship Date` precedes `Order Date`.
 
 ## Q6 — Conditional logic, sorting, and pagination
 
+**Modules covered.**
+
+- `13` CASE logic, sorting and pagination
+
 **Ask.** Build the customer-facing product browser: segmented, sorted, and paged.
 
 **Data.** Chinook `Track` / `Album` / `Genre`, Superstore orders.
@@ -204,6 +243,15 @@ pagination does not.
 ---
 
 ## Q7 — The join taxonomy and the fan-out trap
+
+**Modules covered.**
+
+- `14` INNER JOIN and join fundamentals
+- `15` LEFT, RIGHT and FULL OUTER JOIN
+- `16` ON versus WHERE in outer joins
+- `17` CROSS JOIN and Cartesian products
+- `18` Self joins
+- `19` Fan-out: how 1:N joins inflate aggregates
 
 **Ask.** Revenue reported by two teams disagrees by 30%. Find out why, and write the rules.
 
@@ -226,6 +274,11 @@ and why the other two are dangerous.
 
 ## Q8 — Anti-joins, semi-joins, non-equi joins, and LATERAL
 
+**Modules covered.**
+
+- `20` Anti-joins and semi-joins
+- `21` Non-equi joins and LATERAL
+
 **Ask.** Find what is *missing* and what is *nearby*: customers who never bought, films never
 rented, price-band classification, and each customer's most recent orders.
 
@@ -246,6 +299,13 @@ the input that makes `NOT IN` diverge.
 
 ## Q9 — Aggregates, GROUP BY, HAVING, and FILTER
 
+**Modules covered.**
+
+- `22` COUNT, SUM, AVG, MIN, MAX
+- `23` GROUP BY and grouping semantics
+- `24` HAVING versus WHERE
+- `25` FILTER and conditional aggregation
+
 **Ask.** The standard reporting pack: revenue by market, category, and month, with returns netted
 out.
 
@@ -265,6 +325,11 @@ and you can say which reads better and why `COUNT(*)` and `COUNT(col)` differ.
 ---
 
 ## Q10 — Multi-level totals and statistical aggregates
+
+**Modules covered.**
+
+- `26` GROUPING SETS, ROLLUP, CUBE
+- `27` Statistical and ordered-set aggregates
 
 **Ask.** Finance wants subtotals at every level in one result set, and the analytics team wants
 distributions rather than averages.
@@ -289,6 +354,13 @@ runs. Show the distribution that causes it, and say which number belongs in a bo
 
 ## Q11 — Subqueries: scalar, correlated, and quantified
 
+**Modules covered.**
+
+- `28` Scalar and derived-table subqueries
+- `29` Correlated subqueries
+- `30` IN, NOT IN and the NULL trap
+- `31` EXISTS, NOT EXISTS, ANY, ALL
+
 **Ask.** Answer comparative questions — above-average orders, each customer's best purchase,
 products outselling their category average.
 
@@ -308,6 +380,12 @@ three agreeing, with `EXPLAIN ANALYZE` timings for each in `docs/`.
 ---
 
 ## Q12 — CTEs, recursion, and hierarchies
+
+**Modules covered.**
+
+- `32` Common table expressions
+- `33` Recursive CTEs and hierarchies
+- `34` Cycle detection and path accumulation
 
 **Ask.** Model the org chart, walk the playlist graph, and refactor the project's worst query into
 a readable pipeline.
@@ -332,6 +410,13 @@ dataset's `ManagerID` **cannot** be used for this: its values run 1–39 while `
 
 ## Q13 — Ranking, top-N per group, and deduplication
 
+**Modules covered.**
+
+- `35` OVER, PARTITION BY, window basics
+- `36` ROW_NUMBER, RANK, DENSE_RANK
+- `37` NTILE, PERCENT_RANK, CUME_DIST
+- `38` Top-N per group and deduplication
+
 **Ask.** Best-selling track per genre, top customer per country, and a defensible dedup of the
 messy CSVs.
 
@@ -352,6 +437,13 @@ dedup is reproducible — same input, same surviving row, every run.
 ---
 
 ## Q14 — Navigation functions, frames, and running calculations
+
+**Modules covered.**
+
+- `39` LAG and LEAD
+- `40` FIRST_VALUE, LAST_VALUE, NTH_VALUE
+- `41` Frame clauses: ROWS, RANGE, GROUPS
+- `42` Running totals and moving averages
 
 **Ask.** Month-over-month growth, running revenue, moving averages, and customer-lifetime running
 totals.
@@ -375,6 +467,11 @@ data with tied ordering values, and explain exactly why.
 
 ## Q15 — Gaps, islands, sessionization, and pivoting
 
+**Modules covered.**
+
+- `43` Gaps, islands and streaks
+- `44` Sessionization and pivoting
+
 **Ask.** Find consecutive purchase streaks, detect churn gaps, sessionize the GH Archive event
 stream, and produce a pivoted management report.
 
@@ -395,6 +492,12 @@ own gap distribution, not a guess.
 
 ## Q16 — Set operations and reconciliation
 
+**Modules covered.**
+
+- `45` UNION and UNION ALL
+- `46` INTERSECT and EXCEPT
+- `47` Reconciliation and symmetric difference
+
 **Ask.** Reconcile the customer list across three systems, and prove your warehouse matches
 source.
 
@@ -414,6 +517,15 @@ rows-only-in-A, rows-only-in-B, and rows-differing — used again in Q20's tests
 ---
 
 ## Q17 — DML, MERGE, transactions, and concurrency
+
+**Modules covered.**
+
+- `48` INSERT and INSERT ... SELECT
+- `49` UPDATE and UPDATE ... FROM
+- `50` DELETE, DELETE ... USING, TRUNCATE
+- `51` MERGE and upserts
+- `52` Transactions, COMMIT, ROLLBACK, SAVEPOINT
+- `53` Isolation levels, locking, idempotency
 
 **Ask.** Build the loader that RetailIQ runs nightly. It must be safe to re-run and safe to run
 while people are querying.
@@ -438,6 +550,16 @@ demonstrated a phantom read under `READ COMMITTED` that does not occur under `RE
 
 ## Q18 — Schema, constraints, views, indexes, and query plans
 
+**Modules covered.**
+
+- `54` CREATE, ALTER, DROP TABLE
+- `55` Primary keys, foreign keys, referential actions
+- `56` UNIQUE, CHECK, NOT NULL, DEFAULT
+- `57` Identity columns, sequences, generated columns
+- `58` Views and updatable views
+- `59` Materialized views and refresh strategies
+- `60` Indexes, query plans and EXPLAIN
+
 **Ask.** Harden the warehouse schema and make the slow report fast.
 
 **Data.** Your own warehouse tables plus Pagila for realistic index work.
@@ -460,6 +582,15 @@ timings, including **one case where adding an index made things worse** — and 
 ---
 
 ## Q19 — The ETL pipeline: ingest, parse, clean, dedup
+
+**Modules covered.**
+
+- `62` Type profiling and safe casting
+- `63` String parsing and key-value extraction
+- `64` JSON and semi-structured data
+- `65` Arrays, lists and UNNEST
+- `66` Deduplication and survivorship rules
+- `67` Date cleaning and incremental loads
 
 **Ask.** Turn the raw mess into trustworthy staging tables. This is the heart of the project.
 
@@ -495,6 +626,28 @@ exactly what it cost.
 ---
 
 ## Q20 — Warehouse, data quality, and the capstone report
+
+**Modules covered.**
+
+- `68` Star schema and grain
+- `69` Dimension design and surrogate keys
+- `70` Fact table types
+- `71` Bridge tables and many-to-many
+- `72` Date dimension
+- `73` SCD Type 1 and Type 2
+- `74` Late-arriving dimensions and SCD Type 3
+- `75` Not-null and uniqueness tests
+- `76` Referential integrity tests
+- `77` Accepted values and range tests
+- `78` Freshness and volume tests
+- `79` Row-count reconciliation to source
+- `80` Assertion framework and test runner
+- `81` Regression tests and CI
+- `82` Integration rehearsal: full pipeline dry run
+- `83` Cohort, retention and funnel analysis
+- `84` RFM, LTV and churn
+- `85` Pareto, market basket and time-series comparison
+- `86` Executive report and recommendations
 
 **Ask.** Deliver the star schema, the tests that guard it, and the business report RetailIQ
 actually reads. This is the final artefact.
@@ -578,6 +731,100 @@ Every topic, and the question that covers it.
 | | SCD Type 1, Type 2, Type 3, late-arriving dimensions | 20 |
 | **Data quality** | Not-null, unique, referential, accepted values, range, freshness, reconciliation | 20 |
 | **Analytics** | Cohort, funnel, RFM, LTV, churn, Pareto, market basket, YoY/MoM/YTD | 20 |
+
+## All 86 modules
+
+Module numbers and ranges come from the project plan; the names below were written to fit
+each range. Swap them for your own if you have a canonical list — the ranges will still line up.
+
+| # | Folder | Module |
+| --- | --- | --- |
+| 01 | `01-foundations/` | SELECT, projection, aliases and literals |
+| 02 | `01-foundations/` | Numeric, text and boolean types |
+| 03 | `01-foundations/` | Date, time and interval types |
+| 04 | `01-foundations/` | Casting, coercion and TRY_CAST |
+| 05 | `01-foundations/` | NULL semantics, COALESCE, NULLIF |
+| 06 | `01-foundations/` | String and numeric function library |
+| 07 | `02-single-table/` | WHERE, comparison and logical operators |
+| 08 | `02-single-table/` | BETWEEN, IN and quantified predicates |
+| 09 | `02-single-table/` | LIKE, ILIKE and pattern matching |
+| 10 | `02-single-table/` | Regular expressions and regex extraction |
+| 11 | `02-single-table/` | Date arithmetic, DATE_TRUNC, EXTRACT |
+| 12 | `02-single-table/` | Calendar spine with generate_series |
+| 13 | `02-single-table/` | CASE logic, sorting and pagination |
+| 14 | `03-joins/` | INNER JOIN and join fundamentals |
+| 15 | `03-joins/` | LEFT, RIGHT and FULL OUTER JOIN |
+| 16 | `03-joins/` | ON versus WHERE in outer joins |
+| 17 | `03-joins/` | CROSS JOIN and Cartesian products |
+| 18 | `03-joins/` | Self joins |
+| 19 | `03-joins/` | Fan-out: how 1:N joins inflate aggregates |
+| 20 | `03-joins/` | Anti-joins and semi-joins |
+| 21 | `03-joins/` | Non-equi joins and LATERAL |
+| 22 | `04-aggregation/` | COUNT, SUM, AVG, MIN, MAX |
+| 23 | `04-aggregation/` | GROUP BY and grouping semantics |
+| 24 | `04-aggregation/` | HAVING versus WHERE |
+| 25 | `04-aggregation/` | FILTER and conditional aggregation |
+| 26 | `04-aggregation/` | GROUPING SETS, ROLLUP, CUBE |
+| 27 | `04-aggregation/` | Statistical and ordered-set aggregates |
+| 28 | `05-subqueries-ctes/` | Scalar and derived-table subqueries |
+| 29 | `05-subqueries-ctes/` | Correlated subqueries |
+| 30 | `05-subqueries-ctes/` | IN, NOT IN and the NULL trap |
+| 31 | `05-subqueries-ctes/` | EXISTS, NOT EXISTS, ANY, ALL |
+| 32 | `05-subqueries-ctes/` | Common table expressions |
+| 33 | `05-subqueries-ctes/` | Recursive CTEs and hierarchies |
+| 34 | `05-subqueries-ctes/` | Cycle detection and path accumulation |
+| 35 | `06-windows/` | OVER, PARTITION BY, window basics |
+| 36 | `06-windows/` | ROW_NUMBER, RANK, DENSE_RANK |
+| 37 | `06-windows/` | NTILE, PERCENT_RANK, CUME_DIST |
+| 38 | `06-windows/` | Top-N per group and deduplication |
+| 39 | `06-windows/` | LAG and LEAD |
+| 40 | `06-windows/` | FIRST_VALUE, LAST_VALUE, NTH_VALUE |
+| 41 | `06-windows/` | Frame clauses: ROWS, RANGE, GROUPS |
+| 42 | `06-windows/` | Running totals and moving averages |
+| 43 | `06-windows/` | Gaps, islands and streaks |
+| 44 | `06-windows/` | Sessionization and pivoting |
+| 45 | `07-set-ops/` | UNION and UNION ALL |
+| 46 | `07-set-ops/` | INTERSECT and EXCEPT |
+| 47 | `07-set-ops/` | Reconciliation and symmetric difference |
+| 48 | `08-dml/` | INSERT and INSERT ... SELECT |
+| 49 | `08-dml/` | UPDATE and UPDATE ... FROM |
+| 50 | `08-dml/` | DELETE, DELETE ... USING, TRUNCATE |
+| 51 | `08-dml/` | MERGE and upserts |
+| 52 | `08-dml/` | Transactions, COMMIT, ROLLBACK, SAVEPOINT |
+| 53 | `08-dml/` | Isolation levels, locking, idempotency |
+| 54 | `ddl/` | CREATE, ALTER, DROP TABLE |
+| 55 | `ddl/` | Primary keys, foreign keys, referential actions |
+| 56 | `ddl/` | UNIQUE, CHECK, NOT NULL, DEFAULT |
+| 57 | `ddl/` | Identity columns, sequences, generated columns |
+| 58 | `ddl/` | Views and updatable views |
+| 59 | `ddl/` | Materialized views and refresh strategies |
+| 60 | `ddl/` | Indexes, query plans and EXPLAIN |
+| 61 | `09-etl/` | Bulk loading and landing tables |
+| 62 | `09-etl/` | Type profiling and safe casting |
+| 63 | `09-etl/` | String parsing and key-value extraction |
+| 64 | `09-etl/` | JSON and semi-structured data |
+| 65 | `09-etl/` | Arrays, lists and UNNEST |
+| 66 | `09-etl/` | Deduplication and survivorship rules |
+| 67 | `09-etl/` | Date cleaning and incremental loads |
+| 68 | `10-warehouse/` | Star schema and grain |
+| 69 | `10-warehouse/` | Dimension design and surrogate keys |
+| 70 | `10-warehouse/` | Fact table types |
+| 71 | `10-warehouse/` | Bridge tables and many-to-many |
+| 72 | `10-warehouse/` | Date dimension |
+| 73 | `10-warehouse/` | SCD Type 1 and Type 2 |
+| 74 | `10-warehouse/` | Late-arriving dimensions and SCD Type 3 |
+| 75 | `tests/` | Not-null and uniqueness tests |
+| 76 | `tests/` | Referential integrity tests |
+| 77 | `tests/` | Accepted values and range tests |
+| 78 | `tests/` | Freshness and volume tests |
+| 79 | `tests/` | Row-count reconciliation to source |
+| 80 | `tests/` | Assertion framework and test runner |
+| 81 | `tests/` | Regression tests and CI |
+| 82 | `(unassigned)/` | Integration rehearsal: full pipeline dry run |
+| 83 | `36-capstone-report/` | Cohort, retention and funnel analysis |
+| 84 | `36-capstone-report/` | RFM, LTV and churn |
+| 85 | `36-capstone-report/` | Pareto, market basket and time-series comparison |
+| 86 | `36-capstone-report/` | Executive report and recommendations |
 
 ## Working notes
 
