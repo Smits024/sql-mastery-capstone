@@ -44,7 +44,8 @@ The repo is public and the data is committed, so everything comes down in one cl
 https://github.com/Smits024/sql-mastery-capstone.git
 ```
 
-IntelliJ has a bundled Git client, so this works even without Git installed and without visiting github.com.
+This needs Git installed and on `PATH` — IntelliJ drives an external `git`, it does not ship one.
+Check with `git --version`. No browser is involved either way.
 
 **Or from a terminal:**
 

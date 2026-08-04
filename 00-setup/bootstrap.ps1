@@ -37,7 +37,7 @@ try {
     Bad "git is not installed or not on PATH."
     Say ""
     Say "Install Git first: https://git-scm.com/download/win"
-    Say "Or use IntelliJ's bundled client: File > New > Project from Version Control"
+    Say "IntelliJ cannot substitute - it drives an external git, it does not ship one."
     exit 1
 }
 
